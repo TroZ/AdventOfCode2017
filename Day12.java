@@ -3,6 +3,8 @@ import java.util.*;
 
 
 public class Day12 {
+	
+	//find groups that can talk to each other, given a can talk to b,c,d lists
 
 	public static void main(String[] args) {
 		
@@ -18,7 +20,7 @@ public class Day12 {
 	
 	
 	public Day12() {
-		//*
+		//*  Toggle comment - switch start of this line between /* and //* to toggle which section of code is active.
 		String[] input = Day2.readFile(filename).split("\n");
 		/*/
 		String[] input =("0 <-> 2\n" + 
@@ -31,7 +33,7 @@ public class Day12 {
 		//*/
 		
 		
-		
+		//read file into structure (comm[x] -> list of people x can directly talk to)
 		for(String line:input) {
 			
 			String[] parts = line.split("<->");
@@ -51,19 +53,21 @@ public class Day12 {
 			
 		}
 		
-		
+		//set of people 0 can talk to
 		HashSet<Integer> com0 =  makeGroup(0);
 				
 		
 		System.out.println("\ntalk to 0: "+com0.size());
 		
 		
+		//part 2, find total number of groups
 		
 		ArrayList<HashSet<Integer>> groups = new ArrayList<HashSet<Integer>>();
-		groups.add(com0);
+		groups.add(com0); //add solution to part 1 to set of all groups
 		
+		//for each person
 		for(int i = 0 ; i<comm.size(); i++) {
-			//see if i is in a current group
+			//see if person i is in a current group
 			boolean found = false;
 			for(int g=0;g<groups.size();g++) {
 				if(groups.get(g).contains(i)){
@@ -71,11 +75,10 @@ public class Day12 {
 				}
 			}
 			
-			
 			if(!found) {
-				//make group with i
+				//if not, make the group with i
 				HashSet<Integer> com = makeGroup(i);
-				groups.add(com);
+				groups.add(com); //add to current list of groups
 			}
 			
 		}

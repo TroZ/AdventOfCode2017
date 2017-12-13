@@ -24,6 +24,7 @@ public class Day9 {
 		//String input = "{{<a!>},{<a!>},{<a!>},{<ab>}}";
 		//String input = "<<<<>";
 		
+		//convert string to a stream
 		StringReader sr = new StringReader(input);
 		int score = getScore(sr,1);
 		
@@ -33,7 +34,9 @@ public class Day9 {
 		System.out.println("garbage chars: "+gchars);
 	}
 	
+	//returns the score for this group and it's sub-groups
 	public int getScore(StringReader sr,int s) {
+		//state
 		int score = 0;
 		boolean garbage = false;
 		boolean cancel = false;
@@ -58,7 +61,7 @@ public class Day9 {
 				}else if(!garbage) {
 					if(c=='{') {
 						score+=s;
-						score+= getScore(sr,s+1);
+						score+= getScore(sr,s+1); //found a sub-group - recursively calc it's score
 					} else if( c=='}') {
 						break; //return score
 					} else if( c=='<') {
@@ -72,7 +75,6 @@ public class Day9 {
 			}
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

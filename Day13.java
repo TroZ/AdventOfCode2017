@@ -17,7 +17,7 @@ public class Day13 {
 	
 	
 	public Day13() {
-		//* Toggle comment - switch start if this line between /* and //* to toggle which section of code is active.
+		//* Toggle comment - switch start of this line between /* and //* to toggle which section of code is active.
 		String[] input = Day2.readFile(filename).split("\n");
 		/*/
 		String[] input =("0: 3\n" + 
@@ -53,6 +53,7 @@ public class Day13 {
 			state[i][2] = -1;
 		}
 		
+		//read input
 		for(String line:input) {
 			String[] parts = line.split(":");
 			int depth = Integer.parseInt(parts[0].trim());
@@ -67,8 +68,11 @@ public class Day13 {
 				test[i][j] = state[i][j];
 			}
 		}
+		//part 1
 		System.out.println("Severity: "+ getSeverity(test));
 		
+		
+		//part 2, find the delay needed to get past all scanners
 		
 		long start = System.currentTimeMillis();
 		int delay = 0; 
@@ -82,15 +86,15 @@ public class Day13 {
 			}
 			
 			
-			//test out test
+			//test out test array
 			if(!getHit(test)) {
-				break;
+				break; //we got through!
 			}
 			
-			moveScanners(state);
+			moveScanners(state); //for next delay amount
 			delay++;
 			if(delay%100 == 0) {
-				System.out.println(""+delay);
+				System.out.println(""+delay); //progress report
 			}
 		}while(true);
 		long end = System.currentTimeMillis();
@@ -101,6 +105,10 @@ public class Day13 {
 		
 	}
 	
+	
+	//methods for more efficient version
+	
+	//get the severity of detection for the scanner state
 	public int getSeverity(int[][] scanners) {
 		int sev = 0;
 		for(int i=0;i<scanners.length;i++) {
@@ -120,6 +128,7 @@ public class Day13 {
 		return sev;
 	}
 	
+	//returns true if a packet sent in this state would be detected
 	public boolean getHit(int[][] scanners) {
 		for(int i=0;i<scanners.length;i++) {
 			
@@ -138,6 +147,7 @@ public class Day13 {
 		return false;
 	}
 	
+	//updates the state of the scanners
 	public void moveScanners(int[][] state) {
 		
 		for(int i=0;i<state.length;i++) {
@@ -164,12 +174,26 @@ public class Day13 {
 	
 	
 	
+	//the below methods were from my initial attempt
+	//this modeled the system exactly as described in the example
+	//I have a 2 dimensional array, where the first dimension is depth
+	//and the second dimension is the positions the scanner can be in at the depth (unallocated if no scanner),
+	//with a 1 if the scanner is in that position and a 0 if not.
+	//a second array held a boolean for each depth, to indicate if that scanner was going up or down. 
+	//Additionally, for part 2, for each delay, I reset the state of everything, and the called move scanners delay times (O n2)
+	//Needless to say, I didn't expect an answer in the millions.
+	//
+	//I initially got an answer of 4192, but this was not accepted and I realized that using severity to check if there was a
+	//detection would work if the first scanner was the only one to detect the packet, show that is the cause of the part2 boolean.
+	
+	
 	private void initialTry(String[] input) {
 		//this is too slow for part 2
 		
 
 		int maxDepth = 0;
 		
+		//read input, find the max scanner depth
 		for(String line:input) {
 			String[] parts = line.split(":");
 			maxDepth = Math.max(maxDepth, Integer.parseInt(parts[0].trim()));
@@ -178,6 +202,7 @@ public class Day13 {
 		int[][] firewall = null;
 		firewall = new int[maxDepth+1][];
 		
+		//read input again, now creating the second dimension array for each scanner.
 		for(String line:input) {
 			String[] parts = line.split(":");
 			int depth = Integer.parseInt(parts[0].trim());
@@ -187,34 +212,35 @@ public class Day13 {
 		
 		boolean[] up = new boolean[maxDepth+1]; //false = down
 		
-		
+		//setup initial firewall state (scanner in first position)
 		reset(firewall);
 		
 		
 		int sev = getSeverity(firewall, up,false);
 		
-		
-		
-		
-		
+		//part 2
 		System.out.println("Severity: "+sev);
 		
 		
-		
+		//part 2 (never finished - took a few minutes just to get to 40,000)
 		int delay = -1;
 		do {
 			
 			delay++;
 			
+			//set initial state
 			reset(firewall);
 			up = new boolean[maxDepth+1];
 			
+			//delay
 			for(int i=0;i<delay;i++) {
 				moveScanners(firewall,up);
 			}
 			
+			//check if there is a hit
 			sev = getSeverity(firewall, up, true);
 			
+			//print status
 			System.out.println("delay: "+delay+"   gives sev:"+sev);
 			
 			
@@ -225,9 +251,10 @@ public class Day13 {
 	}
 
 	/**
-	 * @param firewall
-	 * @param up
-	 * @return
+	 * @param firewall sparse 2d array
+	 * @param up current directions
+	 * @param part2 if any detection is severity 1
+	 * @return severity of detection if packet sent at this state
 	 */
 	private int getSeverity(int[][] firewall, boolean[] up, boolean part2) {
 		//check detection
@@ -259,6 +286,7 @@ public class Day13 {
 
 	/**
 	 * @param firewall
+	 * resets state of scanners 
 	 */
 	private void reset(int[][] firewall) {
 		//set up scanners
@@ -272,6 +300,7 @@ public class Day13 {
 		}
 	}
 
+	//debug printing (as I initially had a bug in the move scanner code)
 	private void printFirewall(int[][] fw,int step) {
 		System.out.println("\nSTEP "+step+":");
 		for(int i=0;i<fw.length;i++) {
@@ -293,6 +322,7 @@ public class Day13 {
 		
 	}
 
+	//moves the scanners to the next position based on their current position and the direction
 	private void moveScanners(int[][] fw, boolean[] up) {
 		for(int i=0;i<fw.length;i++) {
 			int[] scanner = fw[i];

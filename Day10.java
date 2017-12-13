@@ -25,7 +25,10 @@ public class Day10 {
 		
 		//String input = "1,2,4";
 		
-		/*
+		
+		//part 1 = to the reverses indicate and then multiply the first two numbers
+		
+		//init list
 		for(int i=0;i<LEN;i++){
 			list[i] = i;
 		}
@@ -40,6 +43,7 @@ public class Day10 {
 			
 			pos = pos %LEN;
 			
+			//debuging - print out current state
 			for(int i=0;i<LEN;i++){
 				
 				if(i==pos){
@@ -56,42 +60,35 @@ public class Day10 {
 		}
 		
 		
-		
-		
-		
 		System.out.println("\n Number: "+list[0]*list[1]);
 		System.out.println("\n\n\n");
-		*/
 		
 		
+		
+		
+		//part 2 - make a hash using this
 		//17, 31, 73, 47, 23
 		
 		StringBuffer sb = new StringBuffer(input.trim());
+		//sb.append("17,31,73,47,23");
 		sb.append((char)17);
 		sb.append((char)31);
 		sb.append((char)73);
 		sb.append((char)47);
 		sb.append((char)23);
+		//append fixed swaps to end so even an empty string won't just be the numbers in order 
 		
-		//sb.append("17,31,73,47,23");
-		
-		//StringBuffer b = new StringBuffer();
-		
-		String real = sb.toString();
-		
+		//reset array
 		for(int i=0;i<LEN;i++){
 			list[i] = i;
 		}
 		
-		int skip = 0;
+		skip = 0;
 		pos = 0;
 		
+		//do 64 loops
 		for(int count = 0;count<64;count++){
-			
-			//for(String s:input.split(",")){
-				
-				//int change = Integer.parseInt(s);
-			
+						
 			for(int p=0;p<sb.length();p++){
 				
 				int change = (int)sb.charAt(p);
@@ -117,7 +114,7 @@ public class Day10 {
 		System.out.println();
 		
 		
-
+		//calc dense array by xoring every 16 together
 		int[] dense = new int[16];
 		for(int i=0;i<16;i++){
 			
@@ -128,30 +125,29 @@ public class Day10 {
 			}
 		}
 	
+		//print out final hash
 		System.out.println("Dense:");
 		for(int i=0;i<16;i++){
 			String out = Integer.toHexString(dense[i]);
 			if(out.length()==1){
-				System.out.print("0"+out);
+				System.out.print("0"+out);  //this was the bug that took me a while to find.  toHexString only print out the minimum characters needed, so we need a leading 0 if < 16
 			}else{
 				System.out.print(out);
 			}
 		}
 		
-		
-		
-		
-		
-		//System.out.println("garbage chars: "+gchars);
 	}
 
+	
+	//this was originally inline in part one, but pulled it into a method for part two.
+	//reverses starting at pos, len numbers, then advances pos by len+skip  (does not wrap pos, that needs to be done afterwards)
 	public void reverse(int len, int skip){
 		
 		int[] temp = new int[len];
 		
 		//copy to temp
 		for(int i=0;i<len;i++){
-			temp[i] = list[(i+pos)%LEN];
+			temp[i] = list[(i+pos)%LEN];//modulus to the rescue again for cycling around to beginning of the array
 		}
 		
 		//reverse
