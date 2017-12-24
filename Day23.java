@@ -35,6 +35,8 @@ public class Day23 {
 				
 				// loop through e from 2 to b then reset and increment d and go again (loop through e's again)
 				// until d = b or you find a d*e that equals b (and if found, clear flag)
+				//
+				//basically, only if b is prime will flag not be cleared, causing h to get incremented
 				
 				g = ( d*e)-b;
 				if(g==0) {
